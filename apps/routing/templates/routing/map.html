@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fuel route {{ trip.start.query }} to {{ trip.finish.query }}</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+    #layout { display: flex; height: 100%; }
+    #map { flex: 1; }
+    #panel { width: 340px; overflow-y: auto; padding: 16px; box-sizing: border-box; background: #fafafa; border-left: 1px solid #ddd; }
+    #panel h1 { font-size: 18px; margin: 0 0 8px; }
+    .totals { font-size: 14px; margin-bottom: 12px; }
+    .stop { border-top: 1px solid #e3e3e3; padding: 8px 0; font-size: 13px; }
+    .stop strong { display: block; }
+    @media (max-width: 700px) { #layout { flex-direction: column; } #panel { width: 100%; height: 40%; } }
+  </style>
+</head>
+<body>
+<div id="layout">
+  <div id="map"></div>
+  <aside id="panel">
+    <h1>{{ trip.start.query }} &rarr; {{ trip.finish.query }}</h1>
+    <div class="totals">
+      {{ trip.distance_miles }} miles &middot; {{ trip.duration_hours }} h<br>
+      {{ trip.totals.stops }} stops &middot; {{ trip.totals.gallons }} gal &middot;
+      <strong>${{ trip.totals.fuel_cost_usd }}</strong>
+    </div>
+    {% for stop in trip.fuel_stops %}
+      <div class="stop">
+        <strong>{{ stop.sequence }}. {{ stop.name }}</strong>
+        {{ stop.address }}, {{ stop.city }}, {{ stop.state }}<br>
+        Mile {{ stop.mile_marker }} &middot; ${{ stop.price_per_gallon }}/gal &middot;
+        {{ stop.gallons }} gal &middot; ${{ stop.cost }}
+      </div>
+    {% endfor %}
+  </aside>
+</div>
+{{ trip.map.geojson|json_script:"route-geojson" }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[c]);
+  const data = JSON.parse(document.getElementById("route-geojson").textContent);
+  const map = L.map("map");
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(map);
+  const layer = L.geoJSON(data, {
+    style: { color: "#2563eb", weight: 4 },
+    pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+      radius: 8, color: "#b45309", fillColor: "#f59e0b", fillOpacity: 0.9,
+    }),
+    onEachFeature: (feature, marker) => {
+      const p = feature.properties;
+      if (p.kind === "fuel_stop") {
+        marker.bindPopup(`<b>${p.sequence}. ${escapeHtml(p.name)}</b><br>` +
+          `${escapeHtml(p.city)}, ${escapeHtml(p.state)}<br>` +
+          `$${p.price_per_gallon}/gal, ${p.gallons} gal, $${p.cost}`);
+      }
+    },
+  }).addTo(map);
+  map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+</script>
+</body>
+</html>
