@@ -1,11 +1,3 @@
-"""Benchmark five real cross-country routes against the live OSRM server.
-
-For each route it runs a cold request (cache miss) and a warm repeat (cache hit), and
-reports total latency, the time spent waiting for OSRM, the server time excluding OSRM
-and the number of external API calls. Run with ``python scripts/benchmark.py`` after
-``import_stations``.
-"""
-
 from __future__ import annotations
 
 import os

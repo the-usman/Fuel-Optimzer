@@ -1,4 +1,3 @@
-"""HTML map page rendered purely from the cached trip; it never calls the routing API."""
 
 from __future__ import annotations
 

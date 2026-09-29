@@ -1,10 +1,3 @@
-"""Client for the OSRM ``route`` service, the only routing call made per trip.
-
-The base URL and profile come from settings, so the public demo server can be swapped
-for a self hosted OSRM without code changes. Transport failures are translated into
-domain exceptions: timeouts become ``RoutingTimeoutError`` (504), any other failure
-``RoutingProviderError`` (502), and OSRM's ``NoRoute`` answer ``NoRouteFoundError``.
-"""
 
 from __future__ import annotations
 

@@ -1,9 +1,3 @@
-"""Factory for the shared ``requests.Session`` used by every external API client.
-
-Connections are pooled and a real User-Agent is always sent. Retries apply to connection
-errors only: a read timeout or an HTTP error is never retried, so a slow provider cannot
-multiply the number of external calls made by one request.
-"""
 
 from __future__ import annotations
 

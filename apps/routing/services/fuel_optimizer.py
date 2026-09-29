@@ -1,32 +1,5 @@
-"""Chooses where to refuel and how much to buy so the whole trip costs as little as possible.
-
-Pure function over plain dataclasses, with no Django imports, so it is trivially testable.
-
-Assumptions:
-
-1. Tank capacity is ``range_miles / mpg`` gallons (500 miles at 10 MPG = 50 gallons).
-2. The vehicle starts with ``starting_fuel_gallons`` (0 by default, so the first purchase
-   happens at a station at the origin and the total covers the full trip).
-3. It should reach the destination with (close to) zero fuel: nothing is bought beyond
-   what is needed to finish.
-4. Stations are points on the route at their mile marker. The detour from the highway to
-   the station is ignored for cost purposes because every station is inside the corridor.
-5. Prices are fixed for the duration of the trip.
-
-Algorithm (the classic greedy solution to the "gas station problem", optimal for fixed
-prices): the destination is a final node priced at zero. At each station, look at every
-node reachable on a full tank. If one of them is cheaper, buy just enough to reach the
-first cheaper one and drive there. Otherwise fill the tank and drive to the cheapest
-reachable station. Fuel bought here is therefore never more expensive than any fuel that
-could have replaced it, which is why the plan is optimal. Complexity is O(n log n) for
-the sort plus O(n * k) for the scans, where k is the number of stations within one tank.
-
-Money uses ``Decimal``. Gallons are kept to a millionth of a gallon so float noise in the
-mile markers never leaks into prices; costs are exact products of gallons and price and
-are rounded to cents only when the response is rendered.
-"""
-
 from __future__ import annotations
+
 
 from bisect import bisect_right
 from collections.abc import Sequence

@@ -11,3 +11,4 @@ htmlcov/
 .brief.md
 .qodo/
 *.pdf
+.cache/

@@ -36,6 +36,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 TEMPLATES = [
     {
@@ -68,7 +69,10 @@ CACHES = {
     "default": (
         {"BACKEND": "django.core.cache.backends.redis.RedisCache", "LOCATION": REDIS_URL}
         if REDIS_URL
-        else {"BACKEND": "django.core.cache.backends.locmem.LocMemCache", "LOCATION": "routes"}
+        else {
+            "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+            "LOCATION": config("CACHE_DIR", default=str(BASE_DIR / ".cache")),
+        }
     )
 }
 

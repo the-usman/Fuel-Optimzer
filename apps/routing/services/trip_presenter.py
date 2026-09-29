@@ -1,8 +1,3 @@
-"""Turns a computed trip into the JSON friendly payload returned by the API and cached.
-
-Rounding happens here and only here. Stop costs are rounded to cents first and the trip
-total is the sum of those rounded values, so the numbers a client sees always add up.
-"""
 
 from __future__ import annotations
 

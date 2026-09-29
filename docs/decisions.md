@@ -66,7 +66,8 @@ switches to "starts full" (or anything in between); the origin station search is
 - Key: SHA-256 of the start and finish coordinates rounded to 4 decimals (about 11 m). The
   first 12 hex characters are the public `route_id`, so the same trip always has the same id.
 - Value: the full rendered payload. The map page reads it directly; it never calls OSRM.
-- Backend: LocMemCache by default; set `REDIS_URL` to use Django's built-in Redis backend
+- Backend: a file-based cache in `.cache/` by default, so saved routes and map links survive a
+  server restart (the in-memory cache lost them). Set `REDIS_URL` to use Django's built-in Redis backend
   (requires installing the `redis` package), which also shares map pages across workers.
 - TTL: `ROUTE_CACHE_TTL_SECONDS` (24 h). Fuel prices are static in this exercise.
 

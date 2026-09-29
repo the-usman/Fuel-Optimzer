@@ -1,11 +1,3 @@
-"""Single orchestrator for a trip request; the API view calls ``TripPlanner.plan`` only.
-
-Flow: resolve both locations, look the trip up in the cache by rounded coordinates, and
-on a miss call OSRM exactly once, find stations in the corridor, run the fuel optimizer
-and cache the rendered payload under a deterministic ``route_id``. Collaborators are
-injected so tests can substitute fakes for the geocoder, router, repository or cache.
-"""
-
 from __future__ import annotations
 
 import copy

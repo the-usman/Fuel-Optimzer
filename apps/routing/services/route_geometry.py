@@ -1,15 +1,3 @@
-"""Vectorized geometry helpers for route polylines, built on numpy.
-
-Coordinates follow the GeoJSON convention ``[lng, lat]``. Distances use the haversine
-formula on a spherical Earth, which is accurate to well under 0.5 percent for road trips
-and far cheaper than an ellipsoidal model. Points are also mapped to 3D unit vectors so a
-KD-tree can answer radius queries with true great circle distances instead of distorted
-degree distances.
-
-Douglas-Peucker simplification first thins the polyline to one vertex per half tolerance
-of travelled length (fully vectorized), then runs the classic recursive split on what is
-left, which keeps it fast on OSRM geometries with tens of thousands of vertices.
-"""
 
 from __future__ import annotations
 
